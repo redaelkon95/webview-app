@@ -1,0 +1,23 @@
+name: Build APK
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: unzip -q WebViewApp.zip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5
+          build-root-directory: WebViewApp
+      - run: gradle assembleRelease --no-daemon
+        working-directory: WebViewApp
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-apk
+          path: WebViewApp/app/build/outputs/apk/release/app-release.apk
